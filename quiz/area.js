@@ -1,60 +1,66 @@
-class Area{
+class Area {
     /**
      * @type {HTMLDivElement}
      */
-    #div;
-
+    #div
     /**
-     * @returns {HTMLDivElement} visszater az aktualis terulettel, amely az elemeket tartalmazza
+     * @type {HTMLDivElement}
      */
-    get div(){
-        return this.#div;
+    get Div() {
+        return this.#div
     }
-
     /**
-     * 
-     * @param {string} cssClass 
+     * @param {String} cssClass
      */
     constructor(cssClass) {
-        const container = this.#getContainer();
-        this.#div = document.createElement('div');
-        this.#div.className = cssClass;
-        container.appendChild(this.#div);
+        const container = this.#getContainer()
+        this.#div = document.createElement('div')
+        this.#div.className = cssClass
+        container.appendChild(this.#div)
     }
-
     /**
-     * letrehozza a container classal rendelkezo elemet
-     * amelyen belul a div lesz megtalalhato
-     * ha mar letezik, akkor a sor mar letezot adja vissza
-     * 
-     * @returns {HTMLDivElement} containert tartalmazza
+     * @returns {HTMLDivElement}
      */
-    #getContainer(){
-        let container = document.querySelector(".container");
-        if (!container){
-            container = document.createElement('div');
-            container.className = 'container';
-            document.body.appendChild(container);
-        }
-        return container;
-    }
-
-}
-
-/**
- * ez a terulet fogja tartalmazni a kerdest
- */
-class QuestionArea extends Area{    // leszarmazunk az Area osztalybol
-    constructor (cssClass){ 
-        super(cssClass); // az os class konstruktorat hivja meg 
+    #getContainer() {
+        let container = document.querySelector('.container')
+        if (!container) {
+            container = document.createElement('div')
+            container.className = 'container'
+            document.body.appendChild(container)
+        }        
+        return container
     }
 }
-
-/**
- * Ez a terulet fogja tartalmazni a valaszokat
- */
-class AnswerArea extends Area{
-    constructor(cssClass){
-        super(cssClass);
+class QuestionArea extends Area {   
+    /**
+     * @param {string} cssClass
+     * @param {manager} manager
+     */
+    constructor(cssClass, manager){
+        super(cssClass)
+        manager.setNextQuestionCallback((kerdesszoveg) => {
+            this.Div.innerHTML = ''
+            const quCard = document.createElement('div')
+            questionCard.innerHTML = kerdesszoveg
+            quCard.textContent = kerdesszoveg
+            this.Div.appendChild(quCard)
+        })
+    }
+}
+class AnswerArea extends Area {
+    constructor(cssClass, manager){
+        super(cssClass)
+        manager.setNextAnswersCallback((valaszok) => {
+            this.Div.innerHTML = ''
+            for(const valasz of valaszok){
+                const answerCard = document.createElement('div')
+                answerCard.className = 'item'
+                answerCard.innerHTML = valasz
+                answerCard.addEventListener('click', () => {
+                    manager.nextQuestion(valasz)
+                })
+                this.Div.appendChild(answerCard)
+            }
+        })
     }
 }
